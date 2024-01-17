@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Count</title>
+  <link rel="stylesheet" href="script1.js">
+  <style>
+    /* Your CSS styles here */
+  </style>
+</head>
+<body>
+  <div id="user-list"></div>
+  <button id="join-button" onclick="joinChat()">Join Chat</button>
+  <button id="leave-button" onclick="leaveChat()">Leave Chat</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+  <script>
+    let userCount = 0;
+    const socket = io();
+
+    // Function to update and display the user count
+    function updateUserCount() {
+      var userCountElement = document.getElementById("user-list");
+      userCountElement.innerHTML = "<strong>Users Online:</strong> " + userCount;
+    }
+
+    // Function to simulate joining the chat
+    function joinChat() {
+      userCount++;
+      updateUserCount();
+      socket.emit('userJoined');
+    }
+
+    // Function to simulate leaving the chat
+    function leaveChat() {
+      if (userCount > 0) {
+        userCount--;
+        updateUserCount();
+        socket.emit('userLeft');
+      }
+    }
+
+    // Listen for server updates on user count
+    socket.on('updateUserCount', (data) => {
+      userCount = data.userCount;
+      updateUserCount();
+    });
+  </script>
+</body>
+</html>
